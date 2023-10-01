@@ -1,4 +1,4 @@
-# Secure Reliable Transport (SRT) Protocol
+# Secure Reliable Transport (SRT) Protocol with ICE
 
 [About SRT](#what-is-srt) | [Features](#features) | [Getting Started](#getting-started-with-srt) | [Build Instructions](#build-instructions) | [Sample Apps and Tools](#sample-applications-and-tools) | [Contribute](#contributing) | [License](#license) | [Releases](#release-history)
 
@@ -22,9 +22,9 @@
 [![ConanCenter][ConanCenter-badge]][ConanCenter-package]
 
 
-## What is SRT?
+## What is SRT With ICE?
 
-**Secure Reliable Transport (SRT)** is a transport protocol for ultra low (sub-second) latency live video and audio streaming, as well as for generic bulk data transfer[^1]. SRT is available as an open-source technology with the code on GitHub, a published [Internet Draft](https://datatracker.ietf.org/doc/html/draft-sharabayko-srt-01), and a growing [community of SRT users](https://www.srtalliance.org/).
+**Secure Reliable Transport (SRT)** is a transport protocol for ultra low (sub-second) latency live video and audio streaming, as well as for generic bulk data transfer[^1]. SRT is available as an open-source technology with the code on GitHub, a published [Internet Draft](https://datatracker.ietf.org/doc/html/draft-sharabayko-srt-01), and a growing [community of SRT users](https://www.srtalliance.org/). This repo adds ICE to it.
 
 SRT is applied to contribution and distribution endpoints as part of a video stream workflow to deliver the best quality and lowest latency video at all times.
 
