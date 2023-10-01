@@ -22,6 +22,7 @@ written by
 #include "packet.h"
 #include "core.h"
 #include "utilities.h"
+#include <nice/nice.h>
 
 using namespace std;
 using namespace srt;
@@ -168,6 +169,63 @@ int srt_getsockflag(SRTSOCKET u, SRT_SOCKOPT opt, void* optval, int* optlen)
 { return CUDT::getsockopt(u, 0, opt, optval, optlen); }
 int srt_setsockflag(SRTSOCKET u, SRT_SOCKOPT opt, const void* optval, int optlen)
 { return CUDT::setsockopt(u, 0, opt, optval, optlen); }
+
+SrtCandidate srt_ice(const char** stun_servers, const char** turn_servers, const char* ip) {
+    NiceAgent *agent;
+    NiceCandidate *local_candidate = NULL;
+    SrtCandidate result = { NULL, 0 };
+
+    // Initialize Nice library
+    nice_init();
+
+    // Create a new NiceAgent
+    agent = nice_agent_new_full(g_main_loop_new(NULL, FALSE),
+                                NICE_COMPATIBILITY_RFC5245);
+
+    if (agent == NULL) {
+        fprintf(stderr, "Error creating NiceAgent\n");
+        return result;
+    }
+
+    // Add the stun servers
+    for (int i = 0; stun_servers[i] != NULL; i++) {
+        nice_agent_add_stun_server(agent, stun_servers[i]);
+    }
+
+    // Add the turn servers
+    for (int i = 0; turn_servers[i] != NULL; i++) {
+        nice_agent_add_turn_server(agent, turn_servers[i], NICE_TURN_SOCKET_UDP, "", "", "");
+    }
+
+    // Gather candidates
+    if (nice_agent_gather_candidates(agent, 1) < 1) {
+        fprintf(stderr, "Error gathering candidates\n");
+        nice_agent_free(agent);
+        nice_deinit();
+        return result;
+    }
+
+    // Wait for candidate gathering to finish
+    g_main_loop_run(nice_agent_get_main_context(agent));
+
+    // Get the local candidate
+    GSList *local_candidates;
+    g_object_get(agent, "local-candidates", &local_candidates, NULL);
+    if (local_candidates != NULL) {
+        local_candidate = (NiceCandidate *)local_candidates->data;
+        result.port = nice_address_get_port(&local_candidate->addr);
+        result.ip = nice_address_to_string(&local_candidate->addr);
+        g_slist_free(local_candidates);
+    } else {
+        fprintf(stderr, "No local candidates found\n");
+    }
+
+    // Free resources
+    g_object_unref(agent);
+    nice_deinit();
+
+    return result;
+}
 
 int srt_send(SRTSOCKET u, const char * buf, int len) { return CUDT::send(u, buf, len, 0); }
 int srt_recv(SRTSOCKET u, char * buf, int len) { return CUDT::recv(u, buf, len, 0); }
