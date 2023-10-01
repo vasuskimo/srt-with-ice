@@ -826,6 +826,9 @@ static const int SRT_MSGTTL_INF = -1; // unlimited TTL specification for message
 SRT_API void srt_msgctrl_init(SRT_MSGCTRL* mctrl);
 SRT_API extern const SRT_MSGCTRL srt_msgctrl_default;
 
+SRT_API  SrtCandidate srt_ice(const char** stun_servers, const char** turn_servers, const char* ip);
+
+
 // The send/receive functions.
 // These functions have different names due to different sets of parameters
 // to be supplied. Not all of them are needed or make sense in all modes:
