@@ -170,6 +170,12 @@ int srt_getsockflag(SRTSOCKET u, SRT_SOCKOPT opt, void* optval, int* optlen)
 int srt_setsockflag(SRTSOCKET u, SRT_SOCKOPT opt, const void* optval, int optlen)
 { return CUDT::setsockopt(u, 0, opt, optval, optlen); }
 
+typedef struct {
+    const char *ip;
+    int port;
+} SrtCandidate;
+
+
 SrtCandidate srt_ice(const char** stun_servers, const char** turn_servers, const char* ip) {
     NiceAgent *agent;
     NiceCandidate *local_candidate = NULL;
